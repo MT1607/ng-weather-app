@@ -57,6 +57,15 @@ export class App {
             console.error('Error fetching weather:', err);
           },
         });
+        this.weatherApi.getForeCastWeather(`${this.lat()}, ${this.lon()}`, 1).subscribe({
+          next: (data) => {
+            console.log('Forecast API response:', data);
+            this.weatherStateService.setForecastWeather(data);
+          },
+          error: (err) => {
+            console.error('Error fetching forecast:', err);
+          },
+        });
       },
       (error) => {
         console.error('Error getting geolocation', error);

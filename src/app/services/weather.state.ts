@@ -3,6 +3,7 @@ import { WeatherResponse } from '../shared/weather.model';
 
 export interface WeatherState {
   current: WeatherResponse | null;
+  forecast: WeatherResponse | null;
   loading: boolean;
   error: string | null;
   lastSearchQuery: string | null;
@@ -16,6 +17,7 @@ export class WeatherStateService {
   // Signals for state management
   private weatherState = signal<WeatherState>({
     current: null,
+    forecast: null,
     loading: false,
     error: null,
     lastSearchQuery: null,
@@ -24,6 +26,7 @@ export class WeatherStateService {
 
   // Public read-only signals
   readonly currentWeather = computed(() => this.weatherState().current);
+  readonly forecastWeather = computed(() => this.weatherState().forecast);
   readonly isLoading = computed(() => this.weatherState().loading);
   readonly error = computed(() => this.weatherState().error);
   readonly lastSearchQuery = computed(() => this.weatherState().lastSearchQuery);
@@ -42,6 +45,26 @@ export class WeatherStateService {
     this.weatherState.set({
       ...state,
       current: weather,
+      error: null,
+      lastSearchQuery: weather?.location.name ?? null,
+      history: updatedHistory,
+    });
+  }
+
+  /**
+   * Set the forecast weather data
+   */
+  setForecastWeather(weather: WeatherResponse | null): void {
+    console.log('Setting forecast weather in state service:', weather);
+    const state = this.weatherState();
+    const updatedHistory = weather
+      ? [weather, ...state.history.slice(0, 9)] // Keep last 10 searches
+      : state.history;
+
+    this.weatherState.set({
+      ...state,
+      current: weather,
+      forecast: weather,
       error: null,
       lastSearchQuery: weather?.location.name ?? null,
       history: updatedHistory,
@@ -75,6 +98,7 @@ export class WeatherStateService {
   clearState(): void {
     this.weatherState.set({
       current: null,
+      forecast: null,
       loading: false,
       error: null,
       lastSearchQuery: null,

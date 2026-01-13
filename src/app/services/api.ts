@@ -38,4 +38,29 @@ export class WeatherApi {
       }),
     );
   }
+
+  getForeCastWeather(query: string, days: number = 1) {
+    console.log('Fetching forecast for query:', query, 'for days:', days);
+    this.weatherStateService.setLoading(true);
+    this.weatherStateService.clearError();
+
+    const url = `${this.baseUrl}/forecast.json?key=${this.apiKey}&q=${encodeURIComponent(
+      query,
+    )}&days=${days}&aqi=no&alerts=no`;
+
+    return this.httpClient.get<WeatherResponse>(url).pipe(
+      tap((data) => {
+        this.weatherStateService.setForecastWeather(data);
+      }),
+      catchError((error) => {
+        const errorMessage = error.error?.error?.message || 'Failed to fetch forecast data';
+        this.weatherStateService.setError(errorMessage);
+        console.error('Error fetching forecast:', error);
+        return of(null);
+      }),
+      finalize(() => {
+        this.weatherStateService.setLoading(false);
+      }),
+    );
+  }
 }
