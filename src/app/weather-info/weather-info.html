@@ -1,0 +1,10 @@
+<div class="weather-container">
+  <p class="weather-degrees">{{ tempC() }}°</p>
+  <div>
+    <p class="weather-geo">{{ nameCity() }}</p>
+    <p class="weather-time">
+      {{ weatherData()?.current?.last_updated | date: "HH:mm - EEEE, d MMM 'yy" }}
+    </p>
+  </div>
+  <img [src]="iconUrl" alt="weather-icon" class="weather-icon" />
+</div>

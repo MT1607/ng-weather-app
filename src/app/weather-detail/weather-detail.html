@@ -1,0 +1,190 @@
+<div class="text-white">
+  <p class="font-normal lg:my-6 my-4">Weather Details...</p>
+
+  <div class="space-y-4">
+    <!-- Title -->
+    <p class="uppercase font-medium text-base mb-6">{{ conditionText() }}</p>
+
+    <!-- Temp max -->
+    <div class="flex justify-between items-center">
+      <p class="text-sm opacity-80">Temp max</p>
+      <span class="flex items-center gap-2">
+        <span class="text-lg font-medium">19°</span>
+        <img [src]="hotIcon" alt="hot-icon" class="w-5 h-5" />
+      </span>
+    </div>
+
+    <!-- Temp min -->
+    <div class="flex justify-between items-center">
+      <p class="text-sm opacity-80">Temp min</p>
+      <span class="flex items-center gap-2">
+        <span class="text-lg font-medium">15°</span>
+        <img [src]="coldIcon" alt="cold-icon" class="w-5 h-5" />
+      </span>
+    </div>
+
+    <!-- Humidity -->
+    <div class="flex justify-between items-center">
+      <p class="text-sm opacity-80">Humidity</p>
+      <span class="flex items-center gap-2">
+        <span class="text-lg font-medium">58%</span>
+        <img [src]="rainIcon" alt="rain-icon" class="w-5 h-5" />
+      </span>
+    </div>
+
+    <!-- Cloudy -->
+    <div class="flex justify-between items-center">
+      <p class="text-sm opacity-80">Cloudy</p>
+      <span class="flex items-center gap-2">
+        <span class="text-lg font-medium">86%</span>
+        <img [src]="cloudIcon" alt="cloud-icon" class="w-5 h-5" />
+      </span>
+    </div>
+
+    <!-- Wind -->
+    <div class="flex justify-between items-center">
+      <p class="text-sm opacity-80">Wind</p>
+      <span class="flex items-center gap-2">
+        <span class="text-lg font-medium">5km/h</span>
+        <img [src]="windIcon" alt="wind-icon" class="w-5 h-5" />
+      </span>
+    </div>
+  </div>
+
+  <div class="text-white border-b-2 h-12.5 lg:my-6 my-4"></div>
+
+  <!-- weather forecast -->
+  <div class="text-white">
+    <p class="font-normal my-6">Today's Weather Forecast...</p>
+
+    <!-- ScrollView -->
+
+    <div class="space-y-10 h-100 overflow-y-auto pr-4 hide-scrollbar">
+      <!-- Forecast Item 1 - Active -->
+      <div class="flex items-center justify-between rounded-lg">
+        <div class="flex items-center gap-4">
+          <img [src]="snowIcon" alt="snow-icon" class="w-10 h-10" />
+          <div>
+            <p class="text-base font-medium">09:00</p>
+            <p class="text-sm opacity-80">Snow</p>
+          </div>
+        </div>
+        <p class="text-2xl font-semibold">19°</p>
+      </div>
+
+      <!-- Forecast Item 2 -->
+      <div class="flex items-center justify-between rounded-lg">
+        <div class="flex items-center gap-4">
+          <img [src]="snowIcon" alt="snow-icon" class="w-10 h-10" />
+          <div>
+            <p class="text-base font-medium">09:00</p>
+            <p class="text-sm opacity-80">Snow</p>
+          </div>
+        </div>
+        <p class="text-2xl font-semibold">19°</p>
+      </div>
+
+      <!-- Thêm các forecast item khác tương tự -->
+      <div class="flex items-center justify-between rounded-lg">
+        <div class="flex items-center gap-4">
+          <img [src]="snowIcon" alt="snow-icon" class="w-10 h-10" />
+          <div>
+            <p class="text-base font-medium">09:00</p>
+            <p class="text-sm opacity-80">Snow</p>
+          </div>
+        </div>
+        <p class="text-2xl font-semibold">19°</p>
+      </div>
+      <div class="flex items-center justify-between rounded-lg">
+        <div class="flex items-center gap-4">
+          <img [src]="snowIcon" alt="snow-icon" class="w-10 h-10" />
+          <div>
+            <p class="text-base font-medium">09:00</p>
+            <p class="text-sm opacity-80">Snow</p>
+          </div>
+        </div>
+        <p class="text-2xl font-semibold">19°</p>
+      </div>
+      <div class="flex items-center justify-between rounded-lg">
+        <div class="flex items-center gap-4">
+          <img [src]="snowIcon" alt="snow-icon" class="w-10 h-10" />
+          <div>
+            <p class="text-base font-medium">09:00</p>
+            <p class="text-sm opacity-80">Snow</p>
+          </div>
+        </div>
+        <p class="text-2xl font-semibold">19°</p>
+      </div>
+      <div class="flex items-center justify-between rounded-lg">
+        <div class="flex items-center gap-4">
+          <img [src]="snowIcon" alt="snow-icon" class="w-10 h-10" />
+          <div>
+            <p class="text-base font-medium">09:00</p>
+            <p class="text-sm opacity-80">Snow</p>
+          </div>
+        </div>
+        <p class="text-2xl font-semibold">19°</p>
+      </div>
+      <div class="flex items-center justify-between rounded-lg">
+        <div class="flex items-center gap-4">
+          <img [src]="snowIcon" alt="snow-icon" class="w-10 h-10" />
+          <div>
+            <p class="text-base font-medium">09:00</p>
+            <p class="text-sm opacity-80">Snow</p>
+          </div>
+        </div>
+        <p class="text-2xl font-semibold">19°</p>
+      </div>
+      <div class="flex items-center justify-between rounded-lg">
+        <div class="flex items-center gap-4">
+          <img [src]="snowIcon" alt="snow-icon" class="w-10 h-10" />
+          <div>
+            <p class="text-base font-medium">09:00</p>
+            <p class="text-sm opacity-80">Snow</p>
+          </div>
+        </div>
+        <p class="text-2xl font-semibold">19°</p>
+      </div>
+      <div class="flex items-center justify-between rounded-lg">
+        <div class="flex items-center gap-4">
+          <img [src]="snowIcon" alt="snow-icon" class="w-10 h-10" />
+          <div>
+            <p class="text-base font-medium">09:00</p>
+            <p class="text-sm opacity-80">Snow</p>
+          </div>
+        </div>
+        <p class="text-2xl font-semibold">19°</p>
+      </div>
+      <div class="flex items-center justify-between rounded-lg">
+        <div class="flex items-center gap-4">
+          <img [src]="snowIcon" alt="snow-icon" class="w-10 h-10" />
+          <div>
+            <p class="text-base font-medium">09:00</p>
+            <p class="text-sm opacity-80">Snow</p>
+          </div>
+        </div>
+        <p class="text-2xl font-semibold">19°</p>
+      </div>
+      <div class="flex items-center justify-between rounded-lg">
+        <div class="flex items-center gap-4">
+          <img [src]="snowIcon" alt="snow-icon" class="w-10 h-10" />
+          <div>
+            <p class="text-base font-medium">09:00</p>
+            <p class="text-sm opacity-80">Snow</p>
+          </div>
+        </div>
+        <p class="text-2xl font-semibold">19°</p>
+      </div>
+      <div class="flex items-center justify-between rounded-lg">
+        <div class="flex items-center gap-4">
+          <img [src]="snowIcon" alt="snow-icon" class="w-10 h-10" />
+          <div>
+            <p class="text-base font-medium">09:00</p>
+            <p class="text-sm opacity-80">Snow</p>
+          </div>
+        </div>
+        <p class="text-2xl font-semibold">19°</p>
+      </div>
+    </div>
+  </div>
+</div>
