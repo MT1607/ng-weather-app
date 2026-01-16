@@ -6,5 +6,5 @@
       {{ weatherData()?.current?.last_updated | date: "HH:mm - EEEE, d MMM 'yy" }}
     </p>
   </div>
-  <img [src]="iconUrl" alt="weather-icon" class="weather-icon" />
+  <img [src]="iconUrl()" type="image/svg+xml" class="weather-icon" />
 </div>

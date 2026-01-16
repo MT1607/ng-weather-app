@@ -1,16 +1,18 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
+import { WeatherIconService } from '../services/weather-icon.service';
 import { WeatherStateService } from '../services/weather.state';
 import { HourlyForecast } from '../shared/weather.model';
 
 @Component({
   selector: 'app-weather-detail',
-  imports: [CommonModule],
+  imports: [CommonModule, NgOptimizedImage],
   templateUrl: './weather-detail.html',
   styleUrl: './weather-detail.css',
 })
 export class WeatherDetail {
   private weatherStateService = inject(WeatherStateService);
+  private weatherIconService = inject(WeatherIconService);
 
   protected readonly hotIcon = '/assets/image/hot.svg';
   protected readonly coldIcon = '/assets/image/cold.svg';
@@ -47,25 +49,13 @@ export class WeatherDetail {
       return targetHours.includes(hour);
     });
   });
-
   /**
-   * Get weather icon URL based on condition code
+   * Get weather icon URL based on weather condition using the WeatherIconService
    */
   protected getWeatherIcon(condition: any): string {
     if (!condition) return this.snowIcon;
-
-    const conditionCode = condition.code;
-    // Map condition codes to icon paths - adjust based on your available icons
-    const iconMap: { [key: number]: string } = {
-      1183: this.rainIcon, // Light rain
-      1153: this.rainIcon, // Light drizzle
-      1189: this.rainIcon, // Moderate rain
-      1009: this.cloudIcon, // Overcast
-      1003: this.cloudIcon, // Partly cloudy
-      1006: this.cloudIcon, // Cloudy
-    };
-
-    return iconMap[conditionCode] || this.cloudIcon;
+    const iconName = this.weatherIconService.getIconPath(condition);
+    return `/assets/icon/${iconName}.svg`;
   }
 
   /**

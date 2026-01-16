@@ -65,7 +65,7 @@
         class="flex items-center justify-between rounded-lg"
       >
         <div class="flex items-center gap-4">
-          <img [src]="getWeatherIcon(hour.condition)" alt="weather-icon" class="w-10 h-10" />
+          <img [src]="getWeatherIcon(hour.condition)" type="image/svg+xml" class="w-10 h-10" />
           <div>
             <p class="text-base font-medium">{{ formatTime(hour.time) }}</p>
             <p class="text-sm opacity-80">{{ hour.condition.text }}</p>
