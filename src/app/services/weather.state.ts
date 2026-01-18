@@ -8,6 +8,7 @@ export interface WeatherState {
   error: string | null;
   lastSearchQuery: string | null;
   history: WeatherResponse[];
+  cityName?: string;
 }
 
 @Injectable({
@@ -48,6 +49,7 @@ export class WeatherStateService {
       error: null,
       lastSearchQuery: weather?.location.name ?? null,
       history: updatedHistory,
+      cityName: weather?.location.name,
     });
   }
 
@@ -68,6 +70,7 @@ export class WeatherStateService {
       error: null,
       lastSearchQuery: weather?.location.name ?? null,
       history: updatedHistory,
+      cityName: weather?.location.name,
     });
   }
 
@@ -79,6 +82,14 @@ export class WeatherStateService {
       ...state,
       loading,
     }));
+  }
+
+  setCityName(cityName: string): void {
+    this.weatherState.update((state) => ({
+      ...state,
+      cityName: cityName,
+    }));
+    console.log('City name set to:', cityName);
   }
 
   /**
@@ -139,5 +150,10 @@ export class WeatherStateService {
    */
   getStateSnapshot(): WeatherState {
     return this.weatherState();
+  }
+
+  getCityName(): string | undefined {
+    console.log('Getting city name from state service:', this.weatherState().cityName);
+    return this.weatherState().cityName;
   }
 }

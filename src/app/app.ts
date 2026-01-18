@@ -1,14 +1,16 @@
-import { isPlatformBrowser } from '@angular/common';
+import { AsyncPipe, isPlatformBrowser } from '@angular/common';
 import { Component, PLATFORM_ID, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { WeatherApi } from './services/api';
+import { UnsplashService } from './services/unplash.service';
+import { UnsplashState } from './services/unplash.state';
 import { WeatherStateService } from './services/weather.state';
 import { WeatherDetail } from './weather-detail/weather-detail';
 import { WeatherInfo } from './weather-info/weather-info';
 import { NAVIGATOR } from './window-token';
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, WeatherInfo, WeatherDetail],
+  imports: [RouterOutlet, WeatherInfo, WeatherDetail, AsyncPipe],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
@@ -17,12 +19,14 @@ export class App {
   private navigator = inject(NAVIGATOR);
   private weatherApi = inject(WeatherApi);
   private weatherStateService = inject(WeatherStateService);
+  private unplashService = inject(UnsplashService);
+  private unplashState = inject(UnsplashState);
 
   protected readonly title = signal('weather-app');
 
   protected readonly logoUrl = '/assets/image/logo.svg';
   protected readonly searchIconUrl = '/assets/image/search.svg';
-  protected readonly bgImageUrl = '/assets/image/background.svg';
+  protected readonly bgImageUrl$ = this.unplashState.backgroundImage$;
 
   private lat = signal<number | null>(null);
   private lon = signal<number | null>(null);
@@ -52,6 +56,16 @@ export class App {
           next: (data) => {
             console.log('Weather API response:', data);
             this.weatherStateService.setCurrentWeather(data);
+            this.weatherStateService.setCityName(data?.location.name || '');
+            // Fetch city image after getting city name from weather data
+            this.unplashService.getCityImage(data?.location.name || '').subscribe({
+              next: (imageData) => {
+                this.unplashState.setBackgroundImage(imageData);
+              },
+              error: (err) => {
+                console.error('Error fetching city image:', err);
+              },
+            });
           },
           error: (err) => {
             console.error('Error fetching weather:', err);

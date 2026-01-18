@@ -1,4 +1,4 @@
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import { WeatherIconService } from '../services/weather-icon.service';
 import { WeatherStateService } from '../services/weather.state';
@@ -6,7 +6,7 @@ import { HourlyForecast } from '../shared/weather.model';
 
 @Component({
   selector: 'app-weather-detail',
-  imports: [CommonModule, NgOptimizedImage],
+  imports: [CommonModule],
   templateUrl: './weather-detail.html',
   styleUrl: './weather-detail.css',
 })
