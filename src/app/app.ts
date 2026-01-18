@@ -41,6 +41,34 @@ export class App {
 
   onSearch(value: string | null): void {
     console.log('Search button clicked', value);
+    this.weatherApi.getCurrentWeather(`${value}`).subscribe({
+      next: (data) => {
+        console.log('Weather API response:', data);
+        this.weatherStateService.setCurrentWeather(data);
+        this.weatherStateService.setCityName(data?.location.name || '');
+        // Fetch city image after getting city name from weather data
+        this.unplashService.getCityImage(data?.location.name || '').subscribe({
+          next: (imageData) => {
+            this.unplashState.setBackgroundImage(imageData);
+          },
+          error: (err) => {
+            console.error('Error fetching city image:', err);
+          },
+        });
+      },
+      error: (err) => {
+        console.error('Error fetching weather:', err);
+      },
+    });
+    this.weatherApi.getForeCastWeather(`${value}`, 1).subscribe({
+      next: (data) => {
+        console.log('Forecast API response:', data);
+        this.weatherStateService.setForecastWeather(data);
+      },
+      error: (err) => {
+        console.error('Error fetching forecast:', err);
+      },
+    });
   }
 
   getGeoLocation(): void {
