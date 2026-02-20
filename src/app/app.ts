@@ -86,7 +86,16 @@ export class App {
             this.weatherStateService.setCurrentWeather(data);
             this.weatherStateService.setCityName(data?.location.name || '');
             // Fetch city image after getting city name from weather data
-            this.unplashService.getCityImage(data?.location.name || '').subscribe({
+            // this.unplashService.getCityImage(data?.location.name || 'Ha Noi').subscribe({
+            //   next: (imageData) => {
+            //     this.unplashState.setBackgroundImage(imageData);
+            //   },
+            //   error: (err) => {
+            //     console.error('Error fetching city image:', err);
+            //   },
+            // });
+
+            this.unplashService.getCityImage('Ha Noi-night').subscribe({
               next: (imageData) => {
                 this.unplashState.setBackgroundImage(imageData);
               },
