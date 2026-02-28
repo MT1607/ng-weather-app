@@ -23,6 +23,8 @@ export class WeatherApi {
       query,
     )}&aqi=no`;
 
+    console.log('url', url);
+
     return this.httpClient.get<WeatherResponse>(url).pipe(
       tap((data) => {
         this.weatherStateService.setCurrentWeather(data);
