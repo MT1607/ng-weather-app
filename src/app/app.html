@@ -1,7 +1,7 @@
-<main
-  class="width-screen mx-auto bg-cover bg-center relative"
-  [style.backgroundImage]="'url(' + (bgImageUrl$ | async) + ')'"
->
+<main class="width-screen mx-auto bg-cover bg-center relative">
+  @if (isBrowser) {
+    <div id="map" class="leaflet-container h-full w-full absolute inset-0 z-0"></div>
+  }
   <div class="grid grid-cols-12 grid-rows-12 gap-2 h-fit xl:h-screen px-6 xl:px-24">
     <!-- Header -->
     <div class="col-span-12 col-start-1 flex justify-between items-center z-10">

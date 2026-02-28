@@ -1,126 +1,122 @@
-import { AsyncPipe, isPlatformBrowser } from '@angular/common';
-import { Component, PLATFORM_ID, inject, signal } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { Component, OnInit, PLATFORM_ID, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+// import { LeafletModule } from '@bluehalo/ngx-leaflet';
+
 import { WeatherApi } from './services/api';
-import { UnsplashService } from './services/unplash.service';
-import { UnsplashState } from './services/unplash.state';
 import { WeatherStateService } from './services/weather.state';
 import { WeatherDetail } from './weather-detail/weather-detail';
 import { WeatherInfo } from './weather-info/weather-info';
 import { NAVIGATOR } from './window-token';
+
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, WeatherInfo, WeatherDetail, AsyncPipe],
+  standalone: true, // Đảm bảo có standalone nếu dùng Angular 17+
+  imports: [RouterOutlet, WeatherInfo, WeatherDetail],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
-export class App {
+export class App implements OnInit {
   private platformId = inject(PLATFORM_ID);
   private navigator = inject(NAVIGATOR);
   private weatherApi = inject(WeatherApi);
   private weatherStateService = inject(WeatherStateService);
-  private unplashService = inject(UnsplashService);
-  private unplashState = inject(UnsplashState);
 
   protected readonly title = signal('weather-app');
+  protected readonly logoUrl = 'assets/image/logo.svg';
+  protected readonly searchIconUrl = 'assets/image/search.svg';
 
-  protected readonly logoUrl = '/assets/image/logo.svg';
-  protected readonly searchIconUrl = '/assets/image/search.svg';
-  protected readonly bgImageUrl$ = this.unplashState.backgroundImage$;
+  protected isBrowser: boolean = false;
+  private map: any; // L.Map instance
+  private marker: any;
 
-  private lat = signal<number | null>(null);
-  private lon = signal<number | null>(null);
+  constructor() {
+    this.isBrowser = isPlatformBrowser(this.platformId);
+  }
 
   ngOnInit(): void {
-    if (isPlatformBrowser(this.platformId)) {
+    if (this.isBrowser) {
       this.getGeoLocation();
-    } else {
-      console.log('Run in server environment, skipping geolocation.');
+      this.initLeaflet();
     }
   }
 
   onSearch(value: string | null): void {
-    console.log('Search button clicked', value);
+    console.log('city', value);
     this.weatherApi.getCurrentWeather(`${value}`).subscribe({
       next: (data) => {
-        console.log('Weather API response:', data);
         this.weatherStateService.setCurrentWeather(data);
-        this.weatherStateService.setCityName(data?.location.name || '');
-        // Fetch city image after getting city name from weather data
-        this.unplashService.getCityImage(data?.location.name || '').subscribe({
-          next: (imageData) => {
-            this.unplashState.setBackgroundImage(imageData);
-          },
-          error: (err) => {
-            console.error('Error fetching city image:', err);
-          },
-        });
-      },
-      error: (err) => {
-        console.error('Error fetching weather:', err);
-      },
-    });
-    this.weatherApi.getForeCastWeather(`${value}`, 1).subscribe({
-      next: (data) => {
-        console.log('Forecast API response:', data);
-        this.weatherStateService.setForecastWeather(data);
-      },
-      error: (err) => {
-        console.error('Error fetching forecast:', err);
+        if (data?.location) {
+          this.updateMapCenter(data.location.lat, data.location.lon);
+        }
       },
     });
   }
 
   getGeoLocation(): void {
-    if (!this.navigator?.geolocation) {
-      console.warn('Geolocation not available');
-      return;
-    }
-    this.navigator.geolocation.getCurrentPosition(
-      (position) => {
-        this.lat.set(position.coords.latitude);
-        this.lon.set(position.coords.longitude);
-        this.weatherApi.getCurrentWeather(`${this.lat()}, ${this.lon()}`).subscribe({
-          next: (data) => {
-            console.log('Weather API response:', data);
-            this.weatherStateService.setCurrentWeather(data);
-            this.weatherStateService.setCityName(data?.location.name || '');
-            // Fetch city image after getting city name from weather data
-            // this.unplashService.getCityImage(data?.location.name || 'Ha Noi').subscribe({
-            //   next: (imageData) => {
-            //     this.unplashState.setBackgroundImage(imageData);
-            //   },
-            //   error: (err) => {
-            //     console.error('Error fetching city image:', err);
-            //   },
-            // });
+    if (!this.isBrowser || !this.navigator?.geolocation) return;
 
-            this.unplashService.getCityImage('Ha Noi-night').subscribe({
-              next: (imageData) => {
-                this.unplashState.setBackgroundImage(imageData);
-              },
-              error: (err) => {
-                console.error('Error fetching city image:', err);
-              },
-            });
-          },
-          error: (err) => {
-            console.error('Error fetching weather:', err);
-          },
+    this.navigator.geolocation.getCurrentPosition((position) => {
+      const { latitude, longitude } = position.coords;
+      this.weatherApi.getCurrentWeather(`${latitude}, ${longitude}`).subscribe({
+        next: (data) => {
+          if (data?.location) {
+            this.updateMapCenter(data.location.lat, data.location.lon);
+          }
+        },
+      });
+    });
+  }
+
+  private updateMapCenter(lat: number, lon: number) {
+    if (this.map) {
+      this.map.setView([lat, lon], 6);
+
+      if (this.marker) {
+        this.marker.setLatLng([lat, lon]); // Di chuyển marker đến vị trí mới
+      } else {
+        import('leaflet').then((L) => {
+          this.marker = L.marker([lat, lon]).addTo(this.map);
         });
-        this.weatherApi.getForeCastWeather(`${this.lat()}, ${this.lon()}`, 1).subscribe({
-          next: (data) => {
-            console.log('Forecast API response:', data);
-            this.weatherStateService.setForecastWeather(data);
+      }
+    }
+  }
+
+  private initLeaflet() {
+    if (this.isBrowser) {
+      import('leaflet').then((L) => {
+        this.map = L.map('map', {
+          zoomControl: true,
+          attributionControl: false, // Ẩn bớt chữ cho giống Windy
+        }).setView([21.0285, 105.8542], 5);
+
+        // LỚP 1: Ảnh vệ tinh 2D (Base)
+        const satelliteLayer = L.tileLayer(
+          'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+          {
+            maxZoom: 19,
           },
-          error: (err) => {
-            console.error('Error fetching forecast:', err);
+        ).addTo(this.map);
+
+        // LỚP 2: Đường biên giới và tên quốc gia (Overlay)
+        // Lớp này sẽ giúp hiện rõ biên giới màu trắng/xám đè lên ảnh vệ tinh
+        const borderLayer = L.tileLayer(
+          'https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
+          {
+            opacity: 0.8, // Chỉnh độ đậm nhạt của đường biên giới
+            maxZoom: 19,
           },
-        });
-      },
-      (error) => {
-        console.error('Error getting geolocation', error);
-      },
-    );
+        ).addTo(this.map);
+
+        // Thêm Marker vị trí
+        this.marker = L.circleMarker([21.0285, 105.8542], {
+          radius: 6,
+          fillColor: '#00ff00', // Màu xanh lá neon cho nổi bật
+          color: '#fff',
+          weight: 2,
+          fillOpacity: 1,
+        }).addTo(this.map);
+      });
+    }
   }
 }
