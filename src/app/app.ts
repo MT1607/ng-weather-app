@@ -43,9 +43,8 @@ export class App implements OnInit {
 
   onSearch(value: string | null): void {
     console.log('city', value);
-    this.weatherApi.getCurrentWeather(`${value}`).subscribe({
+    this.weatherApi.getForeCastWeather(`${value}`, 7).subscribe({
       next: (data) => {
-        this.weatherStateService.setCurrentWeather(data);
         if (data?.location) {
           this.updateMapCenter(data.location.lat, data.location.lon);
         }
@@ -58,7 +57,7 @@ export class App implements OnInit {
 
     this.navigator.geolocation.getCurrentPosition((position) => {
       const { latitude, longitude } = position.coords;
-      this.weatherApi.getCurrentWeather(`${latitude}, ${longitude}`).subscribe({
+      this.weatherApi.getForeCastWeather(`${latitude}, ${longitude}`, 7).subscribe({
         next: (data) => {
           if (data?.location) {
             this.updateMapCenter(data.location.lat, data.location.lon);
