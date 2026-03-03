@@ -74,7 +74,8 @@ export class App implements OnInit {
       if (this.marker) {
         this.marker.setLatLng([lat, lon]); // Di chuyển marker đến vị trí mới
       } else {
-        import('leaflet').then((L) => {
+        import('leaflet').then((m) => {
+          const L = (m as any).default || m;
           this.marker = L.marker([lat, lon]).addTo(this.map);
         });
       }
@@ -83,7 +84,8 @@ export class App implements OnInit {
 
   private initLeaflet() {
     if (this.isBrowser) {
-      import('leaflet').then((L) => {
+      import('leaflet').then((m) => {
+        const L = (m as any).default || m;
         this.map = L.map('map', {
           zoomControl: true,
           attributionControl: false, // Ẩn bớt chữ cho giống Windy
